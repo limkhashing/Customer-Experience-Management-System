@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    <title>Customer Experience Sentiment Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>Customer Experience Sentiment Analysis</h1>
+    <h3>Tell me your feedback</h3>
+
+    <div>
+        <form action="/api/sentiment" method="post">
+
+            <p> Please spend next 5 minutes to give your honest feedback about the services that we offered </p>
+
+            <label for="feedback">
+                <textarea rows="3" cols="50" name="feedback" required></textarea>
+            </label>
+
+            <br/>
+
+            <input type=submit value="Submit">
+
+        </form>
+    </div>
+</body>
+</html>
