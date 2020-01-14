@@ -1,4 +1,4 @@
-#######################################################################################
+##========================================================================================
 # if want to do sentiment analysis on chinese
 # workaround is translate to English with TextBlob
 # and analyze it with TextBlob or NLTK.vader
@@ -13,14 +13,18 @@
 # Answer of these can change the sentiment
 # Everything of it
 # Absolutely nothing!
-#######################################################################################
 
+##========================================================================================
+# Download NLTK data
 
-# using ntlk / textblob
-
-## ntlk
 # import nltk
+# nltk.download('punkt')
+# nltk.download('stopwords')
 # nltk.download('vader_lexicon')
+# nltk.download('movie_reviews')
+
+##========================================================================================
+# NLTK
 
 # from nltk.sentiment.vader import SentimentIntensityAnalyzer
 #
@@ -34,7 +38,7 @@
 #              "The book was good.",  # positive sentence
 #              "At least it isn't a horrible book.",  # negated negative sentence with contraction
 #              "The book was only kind of good.", # qualified positive sentence is handled correctly (intensity adjusted)
-#              "The plot was good, but the characters are uncompelling and the dialog is not great.", # mixed negation sentence
+    #              "The plot was good, but the characters are uncompelling and the dialog is not great.", # mixed negation sentence
 #              "Today SUX!",  # negative slang with capitalization emphasis
 #              "Today only kinda sux! But I'll get by, lol", # mixed sentiment example with slang and constrastive conjunction "but"
 #              "Make sure you :) or :D today!",  # emoticons handled
@@ -46,31 +50,38 @@
 #     vs = analyzer.polarity_scores(sentence)
 #     print("{:-<65} {}".format(sentence, str(vs)))
 
+# analyzer = SentimentIntensityAnalyzer()
+# vs = analyzer.polarity_scores(feedback)
+# print(vs)
+# print(vs['compound'])
+# print(vs[max(vs.items(), key=operator.itemgetter(1))[0]])
 ##========================================================================================
+# textblob
 
-## Textblob
-# import nltk
-# nltk.download('punkt')
-
-from textblob import TextBlob
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-
-# feedback = '想告诉你们，其实重新开始并不可怕，可怕的是明知道自己想要什么却迟迟不敢去行动！清楚自己要什么、选择自己想要的，这些都是你能保持热忱投入工作和生活的原因。'
-# feedback = '对于该医院的服务，我感到很满意也很开心'
-# feedback = '对于该医院的服务，我感到很满意。虽然有些能改善的地方（如厕所食物等等），可是还是服务周到'
-feedback = "VADER is very smart, handsome, and funny"
-
-blob = TextBlob(feedback)
+# from textblob import TextBlob
+# blob = TextBlob(feedback)
 # translated_blob = str(blob.translate(from_lang="zh-CN", to="en"))
 # final_blob = TextBlob(translated_blob)
+# print(blob.sentiment_assessments)
+# print(blob.sentiment.polarity)
+# print(blob.sentiment.subjectivity)
 
-print(blob.sentiment_assessments)
-print(blob.sentiment.polarity)
-print(blob.sentiment.subjectivity)
+##========================================================================================
+from textblob import TextBlob
 
-analyzer = SentimentIntensityAnalyzer()
-vs = analyzer.polarity_scores(feedback)
-print(vs)
-print(vs['compound'])
+feedback = "I am not very satisfied with the food"
+score = TextBlob(feedback).polarity
 
-# print(vs[max(vs.items(), key=operator.itemgetter(1))[0]])
+if score < -0.50:
+    sentiment = "Very unsatisfied", 1
+elif score < 0.00 and score >= -0.50:
+    sentiment = "Unsatisfied", 2
+elif score >= 0.00 and score <= 0.10:
+    sentiment = "Neutral", 3
+elif score > 0.10 and score <= 0.50:
+    sentiment = "Satisfied", 4
+else:
+    sentiment = "Very satisfied", 5
+
+print(sentiment)
+

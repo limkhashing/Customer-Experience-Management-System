@@ -1,20 +1,22 @@
 # Fine-grained Sentiment Analysis
 # Very Positive = 5 stars and Very Negative = 1 star
 from flask import Flask, render_template, request, jsonify
+from nltk.sentiment import SentimentIntensityAnalyzer
 from textblob import TextBlob
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 app = Flask(__name__)
 
 
 def score_analyze(score):
-    if score < 0.0 or 0.0 < score < 0.25:
+    if score < -0.50:
         return "Very unsatisfied", 1
-    elif 0.25 <= score < 0.50:
+    elif 0.00 > score >= -0.50:
         return "Unsatisfied", 2
-    elif 0.50 <= score < 0.75:
+    elif 0.00 <= score <= 0.10:
+        return "Neutral", 3
+    elif 0.10 < score <= 0.50:
         return "Satisfied", 4
-    elif 0.75 <= score <= 1.0:
+    else:
         return "Very satisfied", 5
 
 
@@ -22,37 +24,8 @@ def lang_detection(feedback):
     return TextBlob(feedback).detect_language()
 
 
-def sentiment_malay(feedback):
-    # using TextBlob to perform translation from ms to En
-    translated_feedback = str(TextBlob(feedback).translate(from_lang="ms", to="en"))
-    sentiment_strength = SentimentIntensityAnalyzer().polarity_scores(translated_feedback)
-    print(sentiment_strength)
-    if sentiment_strength['neu'] > sentiment_strength['neg'] and sentiment_strength['neu'] > sentiment_strength['pos']:
-        return "Neutral", 3
-    return score_analyze(sentiment_strength['compound'])
-
-
-def sentiment_english(feedback):
-    sentiment_strength = SentimentIntensityAnalyzer().polarity_scores(feedback)
-    print(sentiment_strength)
-    if sentiment_strength['neu'] > sentiment_strength['neg'] and sentiment_strength['neu'] > sentiment_strength['pos']:
-        return "Neutral", 3
-    return score_analyze(sentiment_strength['compound'])
-
-
-def sentiment_chinese(feedback):
-    # using TextBlob to perform translation from zh-CN to En
-    translated_feedback = str(TextBlob(feedback).translate(from_lang="zh-CN", to="en"))
-    sentiment_strength = SentimentIntensityAnalyzer().polarity_scores(translated_feedback)
-    print(sentiment_strength)
-    if sentiment_strength['neu'] > sentiment_strength['neg'] and sentiment_strength['neu'] > sentiment_strength['pos']:
-        return "Neutral", 3
-    return score_analyze(sentiment_strength['compound'])
-
-
 def init():
     import nltk
-
     try:
         nltk.data.find('tokenizers/punkt')
         nltk.data.find('sentiment/vader_lexicon.zip')
@@ -61,8 +34,24 @@ def init():
         nltk.download('vader_lexicon')
 
 
+def sentiment_analysis(feedback, lang):
+    if lang == "ms":
+        feedback = str(TextBlob(feedback).translate(from_lang="ms", to="en"))
+    elif lang == "zh-CN":
+        feedback = str(TextBlob(feedback).translate(from_lang="zh-CN", to="en"))
+
+    sentiment_strength = SentimentIntensityAnalyzer().polarity_scores(feedback)
+
+    if sentiment_strength['compound'] != 0.00:
+        print(sentiment_strength)
+        return score_analyze(sentiment_strength['compound'])
+    else:
+        blob = TextBlob(feedback)
+        print(blob.sentiment_assessments)
+        return score_analyze(blob.polarity)
+
+
 @app.route('/',  methods=['GET', 'POST'])
-# @app.route('/api/sentiment', methods=['POST'])
 def index():
     init()
 
@@ -76,14 +65,8 @@ def index():
         print("Feedback: " + feedback)
         print("Language " + lang)
 
-        sentiment = None
-        rating = None
-        if lang == "en":
-            sentiment, rating = sentiment_english(feedback)
-        elif lang == "ms":
-            sentiment, rating = sentiment_malay(feedback)
-        elif lang == "zh-CN":
-            sentiment, rating = sentiment_chinese(feedback)
+        sentiment, rating = sentiment_analysis(feedback, lang)
+
         return render_template('index.html', feedback=feedback, sentiment=sentiment, rating=rating)
     return render_template('index.html')
 
