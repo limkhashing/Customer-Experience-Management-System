@@ -18,3 +18,36 @@ print(positive['positive'])
 print(positive['negative'])
 print(positive['neutral'])
 print(max(positive.items(), key=operator.itemgetter(1))[0])
+
+
+# def score_analyze_malaya(score, category):
+#     if category == "positive":
+#         sentiment = "satisfied"
+#
+#         if 0.50 <= score < 0.75:
+#             return sentiment, 4
+#         elif 0.75 <= score <= 1.0:
+#             return "Very " + sentiment, 5
+#
+#     else:
+#         sentiment = "unsatisfied"
+#
+#         if 0.50 <= score < 0.75:
+#             return sentiment, 2
+#         elif 0.75 <= score <= 1.0:
+#             return "Very " + sentiment, 1
+
+# import malaya
+# import operator
+#
+# model = malaya.sentiment.transformer(model='xlnet', size='base')
+# # model = malaya.sentiment.multinomial()
+# sentiment_strength = model.predict(feedback,get_proba=True,add_neutral=True)
+# print(sentiment_strength)
+# if sentiment_strength['neutral'] > sentiment_strength['negative'] and \
+#         sentiment_strength['neutral'] > sentiment_strength['positive']:
+#     return "Neutral", 3
+#
+# sentiment_category = max(sentiment_strength.items(), key=operator.itemgetter(1))[0]
+# malaya.clear_cache('sentiment/xlnet/base')
+# return score_analyze_malaya(sentiment_strength[sentiment_category], sentiment_category)

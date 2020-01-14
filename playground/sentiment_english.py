@@ -51,7 +51,6 @@
 ## Textblob
 # import nltk
 # nltk.download('punkt')
-import operator
 
 from textblob import TextBlob
 from nltk.sentiment.vader import SentimentIntensityAnalyzer

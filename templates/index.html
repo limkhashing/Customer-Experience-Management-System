@@ -10,12 +10,13 @@
     <h3>Tell me your feedback</h3>
 
     <div>
-        <form action="/api/sentiment" method="post">
+        <form action="/" method="post">
 
             <p> Please spend next 5 minutes to give your honest feedback about the services that we offered </p>
 
             <label for="feedback">
-                <textarea rows="3" cols="50" name="feedback" required></textarea>
+                <textarea rows="3" cols="50" name="feedback"
+                          required>{% if feedback %}{{ feedback }}{% endif %}</textarea>
             </label>
 
             <br/>
@@ -23,6 +24,15 @@
             <input type=submit value="Submit">
 
         </form>
+
+        <div>
+            {% if sentiment and rating and sentiment != None %}
+                <h3> Here is your Sentiment result </h3>
+
+                <b> <p> {{ sentiment }} </p> </b>
+                The Likert scale rating is <b> {{ rating }} </b>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>
