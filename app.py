@@ -43,12 +43,30 @@ def sentiment_analysis(feedback, lang):
     sentiment_strength = SentimentIntensityAnalyzer().polarity_scores(feedback)
 
     if sentiment_strength['compound'] != 0.00:
-        print(sentiment_strength)
+        print("NLTK: ", sentiment_strength)
         return score_analyze(sentiment_strength['compound'])
     else:
         blob = TextBlob(feedback)
-        print(blob.sentiment_assessments)
+        print("Textblob: ", blob.sentiment_assessments)
         return score_analyze(blob.polarity)
+
+
+@app.route('/api/sentiment',  methods=['POST'])
+def sentiment_api():
+    init()
+    
+    if request.form['feedback'] == '':
+        return jsonify({"error": "No feedback found"})
+
+    feedback = request.form['feedback']
+
+    lang = lang_detection(feedback)
+    print("Feedback: " + feedback)
+    print("Language " + lang)
+
+    sentiment, rating = sentiment_analysis(feedback, lang)
+
+    return jsonify({"sentiment": sentiment, "rating": rating})
 
 
 @app.route('/',  methods=['GET', 'POST'])
