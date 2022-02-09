@@ -40,7 +40,7 @@ sklearn==0.0
 tensorboard==1.15.0
 tensorflow==1.15.4
 tensorflow-estimator==1.15.1
-tensorflow-gpu==1.15.4
+tensorflow-gpu==2.5.3
 termcolor==1.1.0
 textblob==0.15.3
 tqdm==4.41.1
